@@ -1,0 +1,101 @@
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+/* Botón Enable (Rojo fuerte) */
+.btn-kill-enable {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: #ec0a1d; /* Rojo */
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-kill-enable:hover {
+  background-color: #c40819;
+}
+
+/* Botón Disable (Gris/Blanco) */
+.btn-kill-disable {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: white;
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-kill-disable:hover {
+  background-color: #f5f5f5;
+}
+
+/* Tema oscuro: botones sobre fondo negro */
+.app-dark .btn-kill-enable {
+  background-color: #dc2626;
+  color: white;
+}
+.app-dark .btn-kill-enable:hover {
+  background-color: #b91c1c;
+}
+.app-dark .btn-kill-disable {
+  background-color: #27272a;
+  border-color: #3f3f46;
+  color: #e4e4e7;
+}
+.app-dark .btn-kill-disable:hover {
+  background-color: #3f3f46;
+}
+.app-dark .tab-btn-dark:hover {
+  background: rgba(6,182,212,0.1);
+  color: #67e8f9;
+}
+
+/* Punto "en vivo" cuando hay conexión */
+.live-dot {
+  animation: live-pulse 2s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}

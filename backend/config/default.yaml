@@ -1,0 +1,118 @@
+# Trading Bot Configuration
+# This file contains all configuration for the Deriv Trading Bot
+
+# Environment Settings
+environment: DEMO  # DEMO or REAL
+log_level: INFO
+
+# Deriv API Configuration
+deriv:
+  app_id: "1089"
+  api_token: "PLACEHOLDER"
+  websocket_url: "wss://ws.derivws.com/websockets/v3"
+
+
+
+# Trading Configuration
+trading:
+  symbol: "R_75"  # Usado cuando symbols está vacío o no definido
+  # Multi-mercado (Fase 2): el bot elige la mejor señal entre estos símbolos cada minuto
+  symbols:
+    - "R_50"   # Volatility 50
+    - "R_75"   # Volatility 75
+    - "R_100"  # Volatility 100
+  base_currency: "USD"
+  stake_currency: "USD"
+  contract_type: "rise_fall"  # rise_fall | multiplier
+
+  # Multiplier (when contract_type: multiplier). Duration 15m gives time for TP/SL to be hit.
+  multiplier:
+    duration: 15
+    duration_unit: "m"
+    multiplier: 10
+    take_profit_percent_of_stake: 0.5  # close when profit >= 50% of stake (USD)
+    stop_loss_percent_of_stake: 0.5    # close when loss >= 50% of stake (USD)
+
+  # Risk Management
+  risk:
+    max_drawdown_total: 0.10   # 10% max drawdown total
+    max_loss_daily: 0.03       # 3% pérdida máxima en el día → deja de operar hasta mañana
+    max_trades_daily: 6       # Máximo 6 operaciones por día
+    max_consecutive_losses: 3 # Tras 3 pérdidas seguidas, pausa
+    consecutive_loss_cooldown_minutes: 30  # Pausa 30 min tras racha de pérdidas
+    risk_per_trade_percent: 0.005  # 0.5% risk per trade (base)
+    risk_per_trade_percent_high_score: 0.007  # 0.7% risk for high score signals
+    max_risk_per_trade_percent: 0.01  # 1% absolute max per trade
+    min_stake: 1.0  # Minimum stake amount
+    max_stake: 1000.0  # Maximum stake amount
+
+  # Strategy Parameters
+  strategy:
+    trend_pullback:
+      ema_fast_period: 20
+      ema_slow_period: 50
+      atr_period: 14
+      rsi_period: 14
+      min_atr_multiplier: 1.5  # Minimum ATR for healthy volatility
+      max_ema_spread_percent: 0.5  # Max spread between EMAs for ranging market
+    # Higher-timeframe trend: only take 1m signals aligned with 5m trend (e.g. CALL when 5m bullish)
+    higher_tf_trend:
+      enabled: true
+      timeframe_minutes: 5
+      allow_neutral: true  # allow trade when 5m trend is neutral
+    # Filtro de calidad: menos operaciones, mejor win rate (solo señales que pasan umbrales)
+    quality_filter:
+      enabled: true
+      min_score: 0.0      # solo operar si score >= este valor (0 = no filtrar por score)
+      rsi_call_max: 65.0  # no CALL si RSI > 65 (evitar entradas en sobrecompra)
+      rsi_put_min: 35.0   # no PUT si RSI < 35 (evitar entradas en sobreventa)
+      max_atr_pct: null   # no operar si ATR/price > este % (ej. 0.02). null = sin límite
+    # Soportes y resistencias: solo operar CALL cerca de soporte, PUT cerca de resistencia (estrategia unificada con trend pullback)
+    support_resistance:
+      enabled: true
+      lookback_candles: 30   # velas para calcular min/max (soporte = min lows, resistencia = max highs)
+      near_pct: 0.003        # precio "cerca" del nivel si está dentro del 0.3%
+      min_candles: 5         # si hay menos velas, no se aplica filtro (no bloquea)
+
+# Database Configuration
+database:
+  type: sqlite  # sqlite or postgresql
+  sqlite:
+    path: "data/trading_bot.db"
+  postgresql:
+    host: "localhost"
+    port: 5432
+    database: "trading_bot"
+    username: "trading_bot"
+    password: "secure_password"
+
+# API Server Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins: ["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:5173", "http://127.0.0.1:3000"]  # React dev server (localhost y 127.0.0.1)
+
+# Monitoring Configuration
+monitoring:
+  console_update_interval_seconds: 5
+  metrics_retention_days: 30
+  enable_prometheus: false
+
+# Kill Switch Configuration
+kill_switch:
+  enabled: false
+  reason: ""
+  auto_triggers:
+    enabled: true
+    max_daily_loss_percent: 0.05  # 5% daily loss
+    max_drawdown_percent: 0.08  # 8% drawdown
+    max_consecutive_losses: 5
+    critical_errors_count: 3  # Number of critical errors before kill
+
+# Development Settings
+development:
+  enable_debug_logging: false
+  mock_trading: false  # Set to true for testing without real trades
+  # dry_run: true = no abre operaciones en Deriv (solo simula). false = ejecuta de verdad.
+  # También puedes usar en .env: DEVELOPMENT__DRY_RUN=0 para ejecutar sin tocar el YAML.
+  dry_run: true

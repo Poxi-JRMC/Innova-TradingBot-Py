@@ -1,0 +1,26 @@
+# Entorno y secretos (no subir a GitHub)
+.env
+.venv
+venv
+env
+
+# Datos locales y estado
+data/
+*.db
+*.sqlite
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
